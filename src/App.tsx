@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { string } from 'prop-types';
 
 interface IUser {
   userName: String;
@@ -22,23 +23,33 @@ class User extends React.Component<IUser> {
 
 const App: React.FC = () => {
 
-  let aTMMachine = new ATMMachine();
+  let question = new Question();
 
-  console.log(aTMMachine.getATMState());
-  aTMMachine.AnswerQuestion();
-  console.log(aTMMachine.getATMState());
+  question.setState(question.noAnswer);
+  console.log(`Order state: ${(question.getState()).constructor.name}`);
+  question.getState().AnswerQuestion();
+  question.getState().CheckAnswer(false);
+  console.log(`Order state: ${(question.getState()).constructor.name}`);
+  question.getState().CheckAnswer(true);
+  console.log(`Order state: ${(question.getState()).constructor.name}`);
+  question.getState().AnswerQuestion();
+  console.log(`Order state: ${(question.getState()).constructor.name}`);
+  question.getState().CheckAnswer(true);
 
-  let myTesla = new ModelS();
-  myTesla = new RearFacingSeats(myTesla);
+  if(question.getState().constructor.name === "HasCorrectAnswerState") {
+    console.log("correct answer next question");
+  } else {
+    console.log("not the correct answer try again");
+  }
 
-  myTesla = new EnhancedAutoPilot(myTesla);
+
+
+
+
+
+
 
   
-
-  console.log(myTesla.cost());
-  console.log(myTesla.getDescription());
-
-
   return (
     <div className="App">
       <header className="App-header">
@@ -52,8 +63,7 @@ const App: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React <br/>
-Hi there!
+          
         </a>
         <User userName={"dtom"} name="dick" age={25}/>
       </header>
@@ -61,214 +71,123 @@ Hi there!
   );
 }
 
-interface ATMState {
+
+//-------------------------------------------------------------------------
+
+interface QuestionState{
+  question: Question;
+
   AnswerQuestion(): void;
   CheckAnswer(correctAnswer: boolean): void;
 }
 
-class ATMMachine {
-  
-  noAnswer: ATMState;
-  hasAnswer: ATMState;
-  hasCorrectAnswer: ATMState;
-  hasIncorrectAnswer: ATMState;
+class Question{
+  public noAnswer: QuestionState;
+  public hasAnswer: QuestionState;
+  public hasCorrectAnswer: QuestionState;
+  public hasIncorrectAnswer: QuestionState;
 
-  atmState!: ATMState;
-  
-  constructor() {
-    this.noAnswer = new NoAnswer(this);
-    this.hasAnswer = new HasAnswer(this);
-    this.hasCorrectAnswer = new HasCorrectAnswer(this);
-    this.hasIncorrectAnswer = new HasIncorrectAnswer(this);
+  public currentQuestionState!: QuestionState;
 
-    this.atmState = this.noAnswer;
+  constructor(){
+    this.noAnswer = new NoAnswerState(this);
+    this.hasAnswer = new HasAnswerState(this);
+    this.hasCorrectAnswer = new HasCorrectAnswerState(this);
+    this.hasIncorrectAnswer = new HasIncorrectAnswerState(this);
+
+    this.setState(this.noAnswer)
   }
 
-  setATMState(newATMState: ATMState): void {
-    this.atmState = newATMState;
+  public setState(questionState: QuestionState){
+    this.currentQuestionState = questionState;
   }
 
-  getATMState(): ATMState {
-    return this.atmState;
-  }
-  
-  AnswerQuestion(): void {
-    this.atmState.AnswerQuestion();
-  }
-
-  CheckAnswer(): void {
-    this.atmState.CheckAnswer(true);
-  }
-
-  GetHasAnswerState(): ATMState {
-    return this.hasAnswer;
-  }
-
-  GetNoAnswerState(): ATMState {
-    return this.noAnswer;
-  }
-
-  GetHasCorrectAnswerState(): ATMState {
-    return this.hasCorrectAnswer;
-  }
-
-  GetHasIncorrectAnswerState(): ATMState {
-    return this.hasIncorrectAnswer;
-  }
-
-}
-
-class NoAnswer implements ATMState {
-
-  atmMachine: ATMMachine;
-
-  constructor(newATMMachine: ATMMachine) {
-    this.atmMachine = newATMMachine;
-  }
-
-  AnswerQuestion(): void {
-    this.atmMachine.setATMState(this.atmMachine.GetHasAnswerState());
-    console.log("NoAnswer - HasAnswerStat");
-  }  
-  
-  CheckAnswer(correctAnswer: boolean): void {
-    this.atmMachine.setATMState(this.atmMachine.GetNoAnswerState());
-    console.log("NoAnswer - NoAnswerState");
+  public getState(): QuestionState{
+    return this.currentQuestionState;
   }
 }
 
-class HasAnswer implements ATMState {
-
-  atmMachine: ATMMachine;
-
-  constructor(newATMMachine: ATMMachine) {
-    this.atmMachine = newATMMachine;
-  }
-
-  AnswerQuestion(): void {
-    this.atmMachine.setATMState(this.atmMachine.GetHasAnswerState())
-  }  
-  
-  CheckAnswer(correctAnswer: boolean): void {
-    if (correctAnswer) {
-      this.atmMachine.setATMState(this.atmMachine.GetHasCorrectAnswerState())
-    } else {
-      this.atmMachine.setATMState(this.atmMachine.GetHasIncorrectAnswerState())
-    }
+class NoAnswerState implements QuestionState{
+    public question: Question;
     
-  }
+    constructor(question: Question){
+      this.question = question;
+    }
+
+    AnswerQuestion(): void {
+      this.question.setState(this.question.hasAnswer);
+      console.log(`Status: ${(this.question.getState()).constructor.name}`);
+    }
+
+    CheckAnswer(correctAnswer: boolean): void {
+      this.question.setState(this.question.noAnswer);
+      console.log(`Status: ${(this.question.getState()).constructor.name}`);
+    }
 }
 
-class HasCorrectAnswer implements ATMState {
-
-  atmMachine: ATMMachine;
-
-  constructor(newATMMachine: ATMMachine) {
-    this.atmMachine = newATMMachine;
+class HasAnswerState implements QuestionState{
+  public question: Question;
+  
+  constructor(question: Question){
+    this.question = question;
   }
 
   AnswerQuestion(): void {
-    this.atmMachine.setATMState(this.atmMachine.GetHasAnswerState())
-  }  
-  
+    this.question.setState(this.question.hasAnswer);
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
+  }
   CheckAnswer(correctAnswer: boolean): void {
-    if (correctAnswer) {
-      this.atmMachine.setATMState(this.atmMachine.GetHasCorrectAnswerState())
-    } else {
-      this.atmMachine.setATMState(this.atmMachine.GetHasIncorrectAnswerState())
+    if (correctAnswer){
+      this.question.setState(this.question.hasCorrectAnswer);
+    } else{
+      this.question.setState(this.question.hasIncorrectAnswer);
     }
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
   }
 }
 
-class HasIncorrectAnswer implements ATMState {
-
-  atmMachine: ATMMachine;
-
-  constructor(newATMMachine: ATMMachine) {
-    this.atmMachine = newATMMachine;
+class HasCorrectAnswerState implements QuestionState{
+  public question: Question;
+  
+  constructor(question: Question){
+    this.question = question;
   }
 
   AnswerQuestion(): void {
-    this.atmMachine.setATMState(this.atmMachine.GetHasAnswerState())
-  }  
-  
+    this.question.setState(this.question.hasAnswer);
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
+  }
+
   CheckAnswer(correctAnswer: boolean): void {
-    if (correctAnswer) {
-      this.atmMachine.setATMState(this.atmMachine.GetHasCorrectAnswerState())
-    } else {
-      this.atmMachine.setATMState(this.atmMachine.GetHasIncorrectAnswerState())
+    if (correctAnswer){
+      this.question.setState(this.question.hasCorrectAnswer);
+    } else{
+      this.question.setState(this.question.hasIncorrectAnswer);
     }
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
   }
 }
 
-//https://www.youtube.com/watch?v=MGEx35FjBuo
-//left off at 20:06
-
-
-abstract class Car{
-  public description: string = "";
-
-  public getDescription(): string{
-    return this.description;
+class HasIncorrectAnswerState implements QuestionState{
+  public question: Question;
+  
+  constructor(question: Question){
+    this.question = question;
   }
 
-  public abstract cost(): number;
-}
-
-class ModelS extends Car{
-  public description = "Model S";
-
-  public cost(): number {
-    return 73000;
+  AnswerQuestion(): void {
+    this.question.setState(this.question.hasAnswer);
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
   }
-}
 
-class ModelX extends Car{
-  public description = "Model X";
-
-  public cost(): number {
-    return 77000;
+  CheckAnswer(correctAnswer: boolean): void {
+    if (correctAnswer){
+      this.question.setState(this.question.hasCorrectAnswer);
+    } else{
+      this.question.setState(this.question.hasIncorrectAnswer);
+    }
+    console.log(`Status: ${(this.question.getState()).constructor.name}`);
   }
 }
-
-abstract class CarOptions extends Car{
-  decoratedCar: Car | undefined;
-  public abstract getDescription(): string;
-  public abstract cost(): number;
-}
-
-class EnhancedAutoPilot extends CarOptions{
-  decoratedCar: Car;
-
-  constructor(car: Car) {
-    super();
-    this.decoratedCar = car;
-  }
-  public getDescription(): string{
-    return this.decoratedCar.getDescription() + ', Enhanced AutoPilot';
-  }
-
-  public cost(): number{
-    return this.decoratedCar.cost() + 5000;
-  }
-}
-
-class RearFacingSeats extends CarOptions{
-  decoratedCar: Car;
-
-  constructor(car: Car) {
-    super();
-    this.decoratedCar = car;
-  }
-  public getDescription(): string{
-    return this.decoratedCar.getDescription() + ', Rear facing seats';
-  }
-
-  public cost(): number{
-    return this.decoratedCar.cost() + 4000;
-  }
-}
-
-
 
 export default App;
