@@ -5,7 +5,8 @@ const QuizContext = React.createContext<IContext | null>(null);
 export interface IContext {
     buttonText: string;
     actions: IActions;
-  }
+    questionNumber: string;
+}
 
 interface IActions {
     answerEntered: Function;
@@ -33,45 +34,53 @@ export class Provider extends Component {
       console.log("not the correct answer try again");
     } */
 
+    state = {
+        correctAnswer: null,
+        buttonText: "Check",
+        questionNumber: 0
+    };
+
     question: Question2;
 
     constructor(props: any){
         super(props);
         this.question = new Question2();
         this.question.setState(this.question.noAnswer);
-    }
-
-    state = {
-        correctAnswer: null,
-        buttonText: "Check"
-    };
+    } 
 
     handleAnswerEntered = (answer: string) => {
         this.setState({
             correctAnswer: answer
         });
 
+        this.question.getState().AnswerQuestion();
     }
     
     handleCheckAnswer = () => {
+
         if (this.state.correctAnswer) {
-            if (this.state.correctAnswer === "true") {
+
+            this.question.getState().CheckAnswer(this.state.correctAnswer === "true");
+
+            if(this.question.getState().constructor.name === "HasCorrectAnswerState") {
+                console.log("Correct - Next Question");
                 this.setState({
                     buttonText: "Correct - Next Question"
                 });
-                console.log("Correct");
             } else {
+                console.log("Incorrect - Try Again");
                 this.setState({
-                    buttonText: "Try Again"
+                    buttonText: "Incorrect - Try Again"
                 });
-                console.log("wrong");
-            }
+            } 
         } else {
+            console.log("No answer - Check");
             this.setState({
-            buttonText: "select an answer"
+                buttonText: "No answer - Check"
             });
-            console.log("no anwser selected");
+            this.question.setState(this.question.noAnswer);
         }
+       
     }
 
     appContext: IContext = {
@@ -79,7 +88,8 @@ export class Provider extends Component {
         actions: {
             answerEntered: this.handleAnswerEntered,
             checkAnswer: this.handleCheckAnswer
-        }
+        },
+        questionNumber: this.state.questionNumber.toString()
     };
 
     render() {

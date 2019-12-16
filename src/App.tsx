@@ -6,12 +6,11 @@ import AnswerButton from './components/AnswerButton';
 import questions from './data/Questions';
 import AnswerInput from './components/AnswerInput';
 import AnswerOrder from './components/AnswerOrder';
+import { Consumer } from './components/Context';
 
-let questionNumber = 2;
+const QuestionDeserializer = (props: any)  => {
 
-const QuestionDeserializer = ()  => {
-
-  let serializedQuestion = questions[questionNumber];
+  let serializedQuestion = questions[props.questionNumber];
   
   let deserializedQuestion: any;
 
@@ -91,7 +90,7 @@ class App extends React.Component {
     return (
       <div>
         <Header />
-        <QuestionDeserializer />
+        <QuestionDeserializer questionNumber={2}/>
         <Footer/>
       </div>
     );
