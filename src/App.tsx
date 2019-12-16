@@ -1,87 +1,131 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { string } from 'prop-types';
+import './App.css';import Header from './components/Header';
+import Question from './components/Question';
+import Footer from './components/Footer';
+import AnswerButton from './components/AnswerButton';
+import questions from './data/Questions';
+import AnswerInput from './components/AnswerInput';
+import AnswerOrder from './components/AnswerOrder';
 
-interface IUser {
-  userName: String;
-  name: String;
-  age: Number;
-}
+let questionNumber = 2;
 
-class User extends React.Component<IUser> {
-  render() {
-    return(
-    <div>
-  hi there i'm {this.props.name} the user!
-      userName: {this.props.userName}
-      age: {this.props.age}
+const QuestionDeserializer = ()  => {
 
-    </div>
-    )};
-}
+  let serializedQuestion = questions[questionNumber];
+  
+  let deserializedQuestion: any;
 
-const App: React.FC = () => {
-
-  let question = new Question();
-
-  question.setState(question.noAnswer);
-  console.log(`Order state: ${(question.getState()).constructor.name}`);
-  question.getState().AnswerQuestion();
-  question.getState().CheckAnswer(false);
-  console.log(`Order state: ${(question.getState()).constructor.name}`);
-  question.getState().CheckAnswer(true);
-  console.log(`Order state: ${(question.getState()).constructor.name}`);
-  question.getState().AnswerQuestion();
-  console.log(`Order state: ${(question.getState()).constructor.name}`);
-  question.getState().CheckAnswer(true);
-
-  if(question.getState().constructor.name === "HasCorrectAnswerState") {
-    console.log("correct answer next question");
-  } else {
-    console.log("not the correct answer try again");
+  switch(serializedQuestion.type) {
+    case "MultipleChoiceQuestion":
+      deserializedQuestion = MultipleChoiceQuestion(serializedQuestion);
+      break;
+    case "TrueFalseQuestion":
+      deserializedQuestion = TrueFalseQuestion(serializedQuestion);
+      break;
+    case  "FillInTheBlanksQuestion":
+      deserializedQuestion = FillInTheBlanksQuestion(serializedQuestion);
+      break;
+    case  "OrderingQuestion":
+      deserializedQuestion = OrderingQuestion(serializedQuestion);
+      break;
+    default:
+      break;
   }
 
-
-
-
-
-
-
-
-  
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          
-        </a>
-        <User userName={"dtom"} name="dick" age={25}/>
-      </header>
-    </div>
-  );
+  return(deserializedQuestion);
 }
 
+const MultipleChoiceQuestion = (serializedQuestion: any) => {
+  return(
+    <div>
+      <Question text={serializedQuestion.question} />
+      {serializedQuestion.answers.map( (answer: any) =>
+        <AnswerButton 
+          questionAnswer={answer}
+          key={answer.id.toString()}
+        />  
+      )}
+    </div>
+  );  
+}
 
-//-------------------------------------------------------------------------
+const TrueFalseQuestion = (serializedQuestion: any) => {
+  return(
+    <div>
+      <Question text={serializedQuestion.question} />
+      {serializedQuestion.answers.map( (answer: any) =>
+        <AnswerButton 
+          questionAnswer={answer}
+          key={answer.id.toString()}
+        />  
+      )}
+    </div>
+  );  
+}
+
+const FillInTheBlanksQuestion = (serializedQuestion: any) => {
+  return(
+    <div>
+      <Question text={serializedQuestion.question} />
+      {serializedQuestion.answers.map( (answer: any) =>
+        <AnswerInput 
+          questionAnswer={answer}
+          key={answer.id.toString()}
+        />  
+      )}
+    </div>
+  );  
+}
+
+const OrderingQuestion = (serializedQuestion: any) => {
+  return(
+    <div>
+      <Question text={serializedQuestion.question} />
+      <AnswerOrder questionAnswer={serializedQuestion.answers}/>
+    </div>
+  );  
+}
+
+class App extends React.Component {
+  render() {
+
+    let question = new Question2();
+
+    question.setState(question.noAnswer);
+    console.log(`Order state: ${(question.getState()).constructor.name}`);
+    question.getState().AnswerQuestion();
+    question.getState().CheckAnswer(false);
+    console.log(`Order state: ${(question.getState()).constructor.name}`);
+    question.getState().CheckAnswer(true);
+    console.log(`Order state: ${(question.getState()).constructor.name}`);
+    question.getState().AnswerQuestion();
+    console.log(`Order state: ${(question.getState()).constructor.name}`);
+    question.getState().CheckAnswer(true);
+  
+    if(question.getState().constructor.name === "HasCorrectAnswerState") {
+      console.log("correct answer next question");
+    } else {
+      console.log("not the correct answer try again");
+    }
+    
+    return (
+      <div>
+        <Header />
+        <QuestionDeserializer />
+        <Footer/>
+      </div>
+    );
+  }
+}
 
 interface QuestionState{
-  question: Question;
+  question: Question2;
 
   AnswerQuestion(): void;
   CheckAnswer(correctAnswer: boolean): void;
 }
 
-class Question{
+class Question2{
   public noAnswer: QuestionState;
   public hasAnswer: QuestionState;
   public hasCorrectAnswer: QuestionState;
@@ -108,9 +152,9 @@ class Question{
 }
 
 class NoAnswerState implements QuestionState{
-    public question: Question;
+    public question: Question2;
     
-    constructor(question: Question){
+    constructor(question: Question2){
       this.question = question;
     }
 
@@ -126,9 +170,9 @@ class NoAnswerState implements QuestionState{
 }
 
 class HasAnswerState implements QuestionState{
-  public question: Question;
+  public question: Question2;
   
-  constructor(question: Question){
+  constructor(question: Question2){
     this.question = question;
   }
 
@@ -147,9 +191,9 @@ class HasAnswerState implements QuestionState{
 }
 
 class HasCorrectAnswerState implements QuestionState{
-  public question: Question;
+  public question: Question2;
   
-  constructor(question: Question){
+  constructor(question: Question2){
     this.question = question;
   }
 
@@ -169,9 +213,9 @@ class HasCorrectAnswerState implements QuestionState{
 }
 
 class HasIncorrectAnswerState implements QuestionState{
-  public question: Question;
+  public question: Question2;
   
-  constructor(question: Question){
+  constructor(question: Question2){
     this.question = question;
   }
 
