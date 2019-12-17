@@ -10,6 +10,8 @@ import { Consumer } from './components/Context';
 
 const QuestionDeserializer = (props: any)  => {
 
+console.log("props.questionNumber: " + props.questionNumber);
+
   let serializedQuestion = questions[props.questionNumber];
   
   let deserializedQuestion: any;
@@ -90,7 +92,13 @@ class App extends React.Component {
     return (
       <div>
         <Header />
-        <QuestionDeserializer questionNumber={2}/>
+        <Consumer>
+          { (value) => {
+            return(
+              <QuestionDeserializer questionNumber={value?.questionNumber}/>
+            );
+          }}
+        </Consumer>
         <Footer/>
       </div>
     );

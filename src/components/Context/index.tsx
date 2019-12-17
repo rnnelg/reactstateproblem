@@ -5,7 +5,7 @@ const QuizContext = React.createContext<IContext | null>(null);
 export interface IContext {
     buttonText: string;
     actions: IActions;
-    questionNumber: string;
+    questionNumber: number;
 }
 
 interface IActions {
@@ -58,7 +58,20 @@ export class Provider extends Component {
     
     handleCheckAnswer = () => {
 
+        console.log(this.state.questionNumber);
+
         if (this.state.correctAnswer) {
+
+          if(this.question.getState().constructor.name === "HasCorrectAnswerState") {
+            
+            this.setState({
+                questionNumber: this.state.questionNumber + 1
+            });
+
+            this.appContext.questionNumber = this.state.questionNumber;
+            console.log("this.appContext.questionNumber: " + this.appContext.questionNumber);
+
+          } else {
 
             this.question.getState().CheckAnswer(this.state.correctAnswer === "true");
 
@@ -73,12 +86,13 @@ export class Provider extends Component {
                     buttonText: "Incorrect - Try Again"
                 });
             } 
+          }
         } else {
-            console.log("No answer - Check");
-            this.setState({
-                buttonText: "No answer - Check"
-            });
-            this.question.setState(this.question.noAnswer);
+          console.log("No answer - Check");
+          this.setState({
+              buttonText: "No answer - Check"
+          });
+          this.question.setState(this.question.noAnswer);
         }
        
     }
@@ -89,11 +103,12 @@ export class Provider extends Component {
             answerEntered: this.handleAnswerEntered,
             checkAnswer: this.handleCheckAnswer
         },
-        questionNumber: this.state.questionNumber.toString()
+        questionNumber: this.state.questionNumber
     };
 
     render() {
-        
+        console.log("index.tsx rendered");
+        console.log(this.appContext.questionNumber);
         return(
             <QuizContext.Provider value={this.appContext}>
                 {this.props.children}
