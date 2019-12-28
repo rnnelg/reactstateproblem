@@ -58,8 +58,6 @@ export class Provider extends Component {
     
     handleCheckAnswer = () => {
 
-        console.log(this.state.questionNumber);
-
         if (this.state.correctAnswer) {
 
           if(this.question.getState().constructor.name === "HasCorrectAnswerState") {
@@ -67,10 +65,7 @@ export class Provider extends Component {
             this.setState({
                 questionNumber: this.state.questionNumber + 1
             });
-
-            this.appContext.questionNumber = this.state.questionNumber;
-            console.log("this.appContext.questionNumber: " + this.appContext.questionNumber);
-
+            
           } else {
 
             this.question.getState().CheckAnswer(this.state.correctAnswer === "true");
@@ -97,20 +92,16 @@ export class Provider extends Component {
        
     }
 
-    appContext: IContext = {
-        buttonText: this.state.buttonText,
-        actions: {
-            answerEntered: this.handleAnswerEntered,
-            checkAnswer: this.handleCheckAnswer
-        },
-        questionNumber: this.state.questionNumber
-    };
-
     render() {
-        console.log("index.tsx rendered");
-        console.log(this.appContext.questionNumber);
         return(
-            <QuizContext.Provider value={this.appContext}>
+            <QuizContext.Provider value={{
+              buttonText: this.state.buttonText,
+              actions: {
+                  answerEntered: this.handleAnswerEntered,
+                  checkAnswer: this.handleCheckAnswer
+              },
+              questionNumber: this.state.questionNumber
+          }}>
                 {this.props.children}
             </QuizContext.Provider>
         );
