@@ -18,7 +18,7 @@ console.log("props.questionNumber: " + props.questionNumber);
 
   switch(serializedQuestion.type) {
     case "MultipleChoiceQuestion":
-      deserializedQuestion = MultipleChoiceQuestion(serializedQuestion);
+      deserializedQuestion = new MultipleChoiceQuestion({serializedQuestion: serializedQuestion}).render();
       break;
     case "TrueFalseQuestion":
       deserializedQuestion = TrueFalseQuestion(serializedQuestion);
@@ -36,18 +36,32 @@ console.log("props.questionNumber: " + props.questionNumber);
   return(deserializedQuestion);
 }
 
-const MultipleChoiceQuestion = (serializedQuestion: any) => {
-  return(
-    <div>
-      <Question text={serializedQuestion.question} />
-      {serializedQuestion.answers.map( (answer: any) =>
-        <AnswerButton 
-          questionAnswer={answer}
-          key={answer.id.toString()}
-        />  
-      )}
-    </div>
-  );  
+interface ISerializedQuestion {
+  serializedQuestion: any;
+}
+
+class MultipleChoiceQuestion extends React.Component<ISerializedQuestion> {
+
+  constructor(props: ISerializedQuestion) {
+    super(props);    
+  } 
+  
+  render(){
+
+    console.log(this.props.serializedQuestion);
+  
+    return(
+      <div>
+        <Question text={this.props.serializedQuestion.question} />
+        {this.props.serializedQuestion.answers.map( (answer: any) =>
+          <AnswerButton 
+            questionAnswer={answer}
+            key={answer.id.toString()}
+          />  
+        )}
+      </div>
+    );
+  }
 }
 
 const TrueFalseQuestion = (serializedQuestion: any) => {
