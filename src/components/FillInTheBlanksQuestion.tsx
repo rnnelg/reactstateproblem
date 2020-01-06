@@ -39,6 +39,30 @@ const interpretAnswer2 = (inputValue: any) => {
 }
 
 /*
+
+
+var answerInputs = [ 
+	{ key: "1", result: "true" }, 
+	{ key: "2", result: "true" }, 
+	{ key: "3", result: "true" }, 
+	{ key: "4", result: "true" }, 
+	{ key: "5", result: "true" }, 
+	{ key: "6", result: "true" } 
+];
+
+console.log(answerInputs);
+
+
+var answerInput = answerInputs.filter(function (answerInput) {
+	return answerInput.result === "false";
+});
+
+console.log(answerInput);
+
+
+
+
+
 let products = [
   {
     name: "chair",
