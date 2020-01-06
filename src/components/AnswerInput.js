@@ -9,6 +9,8 @@ class AnswerInput extends React.Component {
     
     render() {
 
+      console.log(this.props.myname);
+
       const interpretAnswer = (inputValue) => {
 
         let result = "false";
