@@ -17,7 +17,7 @@ const QuestionDeserializer = (props: any)  => {
       deserializedQuestion = TrueFalseQuestion(serializedQuestion);
       break;
     case  "FillInTheBlanksQuestion":
-      deserializedQuestion = FillInTheBlanksQuestion(serializedQuestion);
+      deserializedQuestion = new FillInTheBlanksQuestion({serializedQuestion: serializedQuestion}).render();
       break;
     case  "OrderingQuestion":
       deserializedQuestion = OrderingQuestion(serializedQuestion);

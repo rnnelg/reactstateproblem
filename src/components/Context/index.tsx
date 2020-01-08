@@ -37,7 +37,7 @@ export class Provider extends Component {
     state = {
         correctAnswer: null,
         buttonText: "Check",
-        questionNumber: 0
+        questionNumber: 3
     };
 
     question: Question2;

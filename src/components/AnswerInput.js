@@ -8,9 +8,7 @@ class AnswerInput extends React.Component {
     };
     
     render() {
-
-      console.log(this.props.myname);
-
+  
       const interpretAnswer = (inputValue) => {
 
         let result = "false";
@@ -19,9 +17,9 @@ class AnswerInput extends React.Component {
           result = "true";
         } else {
           result = "false";
-        }
+        }      
 
-        return result;
+        return this.props.interpretAnswers({ key: this.props.AnswerInputKey, result: result });;
         
       }
 
