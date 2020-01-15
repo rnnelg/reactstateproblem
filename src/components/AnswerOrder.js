@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
-import { Consumer } from './Context';
+import { Consumer } from '../Context';
 
 const SortableItem = SortableElement(({value}) =>
   <li>{value.name}</li>
