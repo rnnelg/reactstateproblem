@@ -1,5 +1,5 @@
 import React from 'react';
-import { Consumer } from '../Context';
+import { Consumer } from '../contexts';
 
 class AnswerInput extends React.Component {
 

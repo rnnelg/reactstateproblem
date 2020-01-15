@@ -41,12 +41,12 @@ export class Provider extends Component {
         questionNumber: 0
     };
 
-    question: QuestionState;
+    questionState: QuestionState;
 
     constructor(props: any){
         super(props);
-        this.question = new QuestionState();
-        this.question.setState(this.question.noAnswer);
+        this.questionState = new QuestionState();
+        this.questionState.setState(this.questionState.noAnswer);
     } 
 
     handleAnswerEntered = (answer: string) => {
@@ -54,14 +54,14 @@ export class Provider extends Component {
             correctAnswer: answer
         });
 
-        this.question.getState().AnswerQuestion();
+        this.questionState.getState().AnswerQuestion();
     }
     
     handleCheckAnswer = () => {
 
         if (this.state.correctAnswer) {
 
-          if(this.question.getState().constructor.name === "HasCorrectAnswerState") {
+          if(this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
             
             this.setState({
                 questionNumber: this.state.questionNumber + 1
@@ -69,9 +69,9 @@ export class Provider extends Component {
             
           } else {
 
-            this.question.getState().CheckAnswer(this.state.correctAnswer === "true");
+            this.questionState.getState().CheckAnswer(this.state.correctAnswer === "true");
 
-            if(this.question.getState().constructor.name === "HasCorrectAnswerState") {
+            if(this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
                 console.log("Correct - Next Question");
                 this.setState({
                     buttonText: "Correct - Next Question"
@@ -88,7 +88,7 @@ export class Provider extends Component {
           this.setState({
               buttonText: "No answer - Check"
           });
-          this.question.setState(this.question.noAnswer);
+          this.questionState.setState(this.questionState.noAnswer);
         }
        
     }

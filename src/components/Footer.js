@@ -1,8 +1,10 @@
-import React from 'react';
-import { Consumer } from '../Context';
+import React, { useContext } from 'react';
+import { Consumer } from '../contexts';
+import { QuestionContext } from '../contexts/QuestionContext';
 
 class Footer extends React.Component {
     render() {
+
       return(
         <Consumer>
           { ({ actions, buttonText }) => {
@@ -17,6 +19,13 @@ class Footer extends React.Component {
         </Consumer>
       );
     }
+}
+
+export const Footer2 = () => {
+  const {book} = useContext(QuestionContext);
+  return (
+    <div>{book.title}</div>  
+  );
 }
 
 export default Footer;
