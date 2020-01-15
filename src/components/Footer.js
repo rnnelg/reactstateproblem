@@ -3,28 +3,42 @@ import { Consumer } from '../contexts';
 import { QuestionContext } from '../contexts/QuestionContext';
 
 class Footer extends React.Component {
-    render() {
+  render() {
 
-      return(
-        <Consumer>
-          { ({ actions, buttonText }) => {
-            return(
+    return (
+      <Consumer>
+        {({ actions, buttonText }) => {
+          return (
+            <div>
               <div>
-                <div>
-                    <button onClick={() => actions.checkAnswer()}>{ buttonText }</button>
-                  </div>
+                <button onClick={() => actions.checkAnswer()}>{buttonText}</button>
               </div>
-            );
-          }}
-        </Consumer>
-      );
-    }
+            </div>
+          );
+        }}
+      </Consumer>
+    );
+  }
 }
 
+
+
+
 export const Footer2 = () => {
-  const {book} = useContext(QuestionContext);
+  const { book, question, setQuestion } = useContext(QuestionContext);
+
+  const setQuestionNumber = () => {
+    setQuestion({
+      correctAnswer: question.correctAnswer,
+      buttonText: question.buttonText,
+      questionNumber: question.questionNumber + 1
+    });
+    console.log(question);
+    
+  }
+
   return (
-    <div>{book.title}</div>  
+    <div onClick={() => setQuestionNumber()}>{book.title}</div>
   );
 }
 
