@@ -24,7 +24,7 @@ const QuestionContextProvider = (props) => {
             correctAnswer: answer,
             buttonText: question.buttonText,
             questionNumber: question.questionNumber
-        })
+        });
         
         this.questionState.getState().AnswerQuestion();
     }
@@ -35,7 +35,9 @@ const QuestionContextProvider = (props) => {
 
             if (this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
 
-                this.setState({
+                setQuestion({
+                    correctAnswer: question.correctAnswer,
+                    buttonText: question.buttonText,
                     questionNumber: this.state.questionNumber + 1
                 });
 
@@ -45,20 +47,26 @@ const QuestionContextProvider = (props) => {
 
                 if (this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
                     console.log("Correct - Next Question");
-                    this.setState({
-                        buttonText: "Correct - Next Question"
+                    setQuestion({
+                        correctAnswer: question.correctAnswer,
+                        buttonText: "Correct - Next Question",
+                        questionNumber: this.state.questionNumber + 1
                     });
                 } else {
                     console.log("Incorrect - Try Again");
-                    this.setState({
-                        buttonText: "Incorrect - Try Again"
+                    setQuestion({
+                        correctAnswer: question.correctAnswer,
+                        buttonText: "Incorrect - Try Again",
+                        questionNumber: this.state.questionNumber + 1
                     });
                 }
             }
         } else {
             console.log("No answer - Check");
-            this.setState({
-                buttonText: "No answer - Check"
+            setQuestion({
+                correctAnswer: question.correctAnswer,
+                buttonText: "No answer - Check",
+                questionNumber: this.state.questionNumber + 1
             });
             this.questionState.setState(this.questionState.noAnswer);
         }
@@ -66,7 +74,7 @@ const QuestionContextProvider = (props) => {
     }
 
     return(
-        <QuestionContext.Provider value={{book, middle: 'qwer', question, setQuestion}}>
+        <QuestionContext.Provider value={{book, middle: 'qwer', question, setQuestion, buttonText: this.state.buttonText,}}>
             {props.children}
         </QuestionContext.Provider>
     );
