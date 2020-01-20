@@ -1,44 +1,34 @@
-import React from 'react';
-import { Consumer } from '../contexts';
+import React, { useState, useContext } from 'react';
+import { QuestionContext } from '../contexts/QuestionContext';
 
-class AnswerButton extends React.Component {
-
-    state = {
-      questionAnswer: this.props.questionAnswer,
-    };
-    
-    render() {
-
-      const interpretAnswer = () => {
-
-        let result = false;
+const AnswerButton = (props) => {
   
-        if (this.state.questionAnswer.value === "true") {
-          result = "true";
-        } else {
-          result = "false";
-        }
+  const { actions } = useContext(QuestionContext);
+  const [ questionAnswer ] = useState(props.questionAnswer);
 
-        console.log(result);
-  
-        return result;
-        
-      }
+  const interpretAnswer = () => {
 
-      return(
-        <Consumer>
-          { ({ actions }) => {
-            return(
-              <div>
-                <button onClick={() => actions.answerEntered(interpretAnswer())}>
-                  {this.state.questionAnswer.name}
-                </button>
-              </div>
-            );
-        }}
-        </Consumer>
-      );
+    let result = false;
+
+    if (questionAnswer.value === "true") {
+      result = "true";
+    } else {
+      result = "false";
     }
-};
+
+    console.log(result);
+
+    return result;
+
+  }
+  
+  return (
+    <div>
+      <button onClick={() => actions.answerEntered(interpretAnswer())}>
+        {questionAnswer.name}
+      </button>
+    </div>
+  );
+}
 
 export default AnswerButton;

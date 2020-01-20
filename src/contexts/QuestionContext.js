@@ -1,83 +1,96 @@
-import React, { createContext, useState } from 'react';
+import React, { Component, createContext } from 'react';
 import { QuestionState } from './QuestionState';
+import questions from '../data/Questions';
 
 export const QuestionContext = createContext();
 
-const QuestionContextProvider = (props) => {
-    
-    const [question, setQuestion] = useState({
+class QuestionContextProvider extends Component {
+
+    state = {
         correctAnswer: null,
         buttonText: "Check",
-        questionNumber: 0
-    });
-    
-    const book = {
-        title: 'war of the winds',
-        author: 'jr token',
-        count: 0
+        questionNumber: 0,
+        questionState: new QuestionState()
+    };
+
+    constructor(props) {
+        super(props);
+
+        this.state.questionState.setState(this.state.questionState.noAnswer);
     }
 
-    const questionState = new QuestionState();
-
-    const handleAnswerEntered = (answer) => {
-        setQuestion({
-            correctAnswer: answer,
-            buttonText: question.buttonText,
-            questionNumber: question.questionNumber
+    handleAnswerEntered = (answer) => {
+        this.setState({
+            correctAnswer: answer
         });
-        
-        this.questionState.getState().AnswerQuestion();
+
+        this.state.questionState.getState().AnswerQuestion();
+        console.log(this.state);
+
     }
 
-    const handleCheckAnswer = () => {
+    handleCheckAnswer = () => {
 
-        if (question.correctAnswer) {
+        if (this.state.correctAnswer) {
 
-            if (this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
+            if (this.state.questionState.getState().constructor.name === "HasCorrectAnswerState") {
 
-                setQuestion({
-                    correctAnswer: question.correctAnswer,
-                    buttonText: question.buttonText,
-                    questionNumber: this.state.questionNumber + 1
-                });
+                console.log("handleCheckAnswer");
+                
+                console.log(questions.length);
+                console.log(this.state.questionNumber);
+                
+                if (questions.length == this.state.questionNumber + 1) {
+                    console.log('the end');
+                    this.setState({
+                        questionNumber: -1
+                    });
+                } else {
+                    this.setState({
+                        questionNumber: this.state.questionNumber + 1
+                    });
+                }
 
             } else {
 
-                this.questionState.getState().CheckAnswer(this.state.correctAnswer === "true");
+                this.state.questionState.getState().CheckAnswer(this.state.correctAnswer === "true");
 
-                if (this.questionState.getState().constructor.name === "HasCorrectAnswerState") {
+                if (this.state.questionState.getState().constructor.name === "HasCorrectAnswerState") {
                     console.log("Correct - Next Question");
-                    setQuestion({
-                        correctAnswer: question.correctAnswer,
-                        buttonText: "Correct - Next Question",
-                        questionNumber: this.state.questionNumber + 1
+                    this.setState({
+                        buttonText: "Correct - Next Question"
                     });
                 } else {
                     console.log("Incorrect - Try Again");
-                    setQuestion({
-                        correctAnswer: question.correctAnswer,
-                        buttonText: "Incorrect - Try Again",
-                        questionNumber: this.state.questionNumber + 1
+                    this.setState({
+                        buttonText: "Incorrect - Try Again"
                     });
                 }
             }
         } else {
             console.log("No answer - Check");
-            setQuestion({
-                correctAnswer: question.correctAnswer,
-                buttonText: "No answer - Check",
-                questionNumber: this.state.questionNumber + 1
+            this.setState({
+                buttonText: "No answer - Check"
             });
-            this.questionState.setState(this.questionState.noAnswer);
+            this.state.questionState.setState(this.state.questionState.noAnswer);
         }
 
     }
 
-    return(
-        <QuestionContext.Provider value={{book, middle: 'qwer', question, setQuestion, buttonText: this.state.buttonText,}}>
-            {props.children}
-        </QuestionContext.Provider>
-    );
+    render() {
+        return (
+            <QuestionContext.Provider value={{
+                buttonText: this.state.buttonText,
+                actions: {
+                    answerEntered: this.handleAnswerEntered,
+                    checkAnswer: this.handleCheckAnswer
+                },
+                questionNumber: this.state.questionNumber
+            }}>
+                {this.props.children}
+            </QuestionContext.Provider>
+        );
+    }
 }
 
 export default QuestionContextProvider;

@@ -3,9 +3,18 @@ import MultipleChoiceQuestion from './MultipleChoiceQuestion';
 import TrueFalseQuestion from './TrueFalseQuestion';
 import FillInTheBlanksQuestion from './FillInTheBlanksQuestion';
 import OrderingQuestion from './OrderingQuestion';
+import React from 'react';
 
 const QuestionDeserializer = (props: any)  => {
 
+  console.log(props.questionNumber);
+
+  if (props.questionNumber == -1) {
+    return(
+      <div>The End</div>
+    );
+  }
+  
   let serializedQuestion = questions[props.questionNumber];
   let deserializedQuestion: any;
 

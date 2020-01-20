@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
-import { Consumer } from '../contexts';
+import React, { useState, useContext } from 'react';
+import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
+import { QuestionContext } from '../contexts/QuestionContext';
 
-const SortableItem = SortableElement(({value}) =>
+const SortableItem = SortableElement(({ value }) =>
   <li>{value.name}</li>
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({ items }) => {
   return (
     <ul>
       {items.map((value, index) => (
@@ -16,55 +16,50 @@ const SortableList = SortableContainer(({items}) => {
   );
 });
 
-class SortableComponent extends Component {
-  
-  state = {
-    items: this.props.questionAnswer,
-  };
+const SortableComponent = (props) => {
 
-  interpretAnswer = () => {
+  const { actions } = useContext(QuestionContext);
+  const [ items, setItems ] = useState(props.questionAnswer);
+
+  const interpretAnswer = () => {
 
     let result = "false";
 
     var i;
-    for (i = 0; i < this.state.items.length; i++) {
-      if (this.state.items[i].value === (i + 1)) {
+    for (i = 0; i < items.length; i++) {
+      if (items[i].value === (i + 1)) {
         result = "true";
       } else {
         result = "false";
         break;
       }
     }
+
+    console.log(result);
     
+
     return result;
 
   }
 
-  onSortEnd = ({oldIndex, newIndex}) => {
-    this.setState({
-      items: arrayMove(this.state.items, oldIndex, newIndex)
-    });
+  const onSortEnd = ({ oldIndex, newIndex }) => {
+    setItems(
+      arrayMove(items, oldIndex, newIndex)
+    );
+    console.log(items);
+    
   };
 
-  render() {
-    return (
-      <Consumer>
-        { ({actions}) => {
-          return(
-            <div>
-              <SortableList items={this.state.items} 
-                onSortEnd={({oldIndex, newIndex}) => {
-                  this.onSortEnd({oldIndex, newIndex});
-                  actions.answerEntered(this.interpretAnswer());
-                }} 
-                lockAxis={"y"} />
-            </div>  
-          );
+  return (
+    <div>
+      <SortableList items={items}
+        onSortEnd={({ oldIndex, newIndex }) => {
+          onSortEnd({ oldIndex, newIndex });
+          actions.answerEntered(interpretAnswer());
         }}
-      </Consumer>
-    
-    );
-  }
+        lockAxis={"y"} />
+    </div>
+  );
 }
 
 export default SortableComponent;

@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Provider } from './contexts';
+import QuestionContextProvider from './contexts/QuestionContext';
 
 ReactDOM.render(
-    <Provider>
+    <QuestionContextProvider>
         <App />
-    </Provider>, 
+    </QuestionContextProvider>,
     document.getElementById('root')
 );
 

@@ -1,29 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './App.css'; import Header from './components/Header';
-import Footer, { Footer2 } from './components/Footer';
-import { Consumer } from './contexts';
+import Footer from './components/Footer';
 import QuestionDeserializer from './components/QuestionDeserializer';
-import QuestionContextProvider from './contexts/QuestionContext';
+import { QuestionContext } from './contexts/QuestionContext';
 
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <Header />
-        <Consumer>
-          {(value) => {
-            return (
-              <QuestionDeserializer questionNumber={value?.questionNumber} />
-            );
-          }}
-        </Consumer>
-        <Footer />
-        <QuestionContextProvider>
-          <Footer2 />
-        </QuestionContextProvider>
-      </div>
-    );
-  }
+const App = () => {
+  const { questionNumber } = useContext(QuestionContext);
+  return (
+    <div>
+      <Header />
+      <QuestionDeserializer questionNumber={questionNumber} />
+      <Footer />
+    </div>
+  );
 }
 
 export default App;
