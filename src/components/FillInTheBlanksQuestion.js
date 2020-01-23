@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Question from './Question';
 import AnswerInput from './AnswerInput';
 
 const FillInTheBlanksQuestion = (serializedQuestion) => {
 
-  const [results, setResults] = useState({});
+  const [results, setResults] = useState('');
 
-  setAnswers(serializedQuestion.answers.map((answer) => (
-    {
-      id: answer.id,
-      result: "false"
-    })
-  ));
+  useEffect(() => {
+    if (results == '') {
+      console.log("useEffect ran2");
+      setResults(serializedQuestion.answers.map((answer) => (
+        {
+          id: answer.id,
+          result: "false"
+        })
+      ));
+    }
+  })
 
   const interpretAnswer = () => {
     var result = results.find(result => result == "false");

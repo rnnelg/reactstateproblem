@@ -9,7 +9,7 @@ class QuestionContextProvider extends Component {
     state = {
         correctAnswer: null,
         buttonText: "Check",
-        questionNumber: 0,
+        questionNumber: 3,
         questionState: new QuestionState()
     };
 
